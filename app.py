@@ -15,7 +15,7 @@ else:
 st.subheader("Dataset Preview")
 st.dataframe(df.head())
 
-feaures = st.multiselect(
+features = st.multiselect(
     "Select features for clustering",
     df.columns.tolist()
 )
@@ -27,10 +27,24 @@ if len(features)<2:
 n_clusters = st.slider("Numer of clusters",2,10,3)
 linkage = st.selectbox("Select linkage",["ward","complete","single"])
 
-X = preprocessing(df,feaures)
+X = preprocessing(df,features)
 model, labels = clustering(X, n_clusters, linkage)
 
 df["Cluster"] = labels
-st.subheader("Cluster Data")
+
+if len(features) == 2  :
+    fig, ax = plt.subplots()
+    ax.scatter(
+        df[features[0]],
+        df[features[1]],
+        c=df["Cluster"]
+    )
+    ax.set_xlabel(features[0])
+    ax.set_ylabel(features[1])
+
+    st.pyplot(fig)
+else:
+    st.info("Select exactly 2 features for visualization")
+st.subheader("Clustered Data")
 st.dataframe(df)
 
